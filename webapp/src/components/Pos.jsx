@@ -9,23 +9,71 @@ import {
   Trash2,
   Menu,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const POSInterface = () => {
   const [cart, setCart] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentSale, setCurrentSale] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Sample frequently bought products
+  // const frequentlyBought = [
+  //   { id: 1, name: "Laptops", price: 3.5, image: "💻" },
+  //   { id: 2, name: "Phones", price: 8.99, image: "📱" },
+  //   { id: 3, name: "CDs", price: 1.99, image: "📀" },
+  //   { id: 4, name: "Audio Systems", price: 2.75, image: "📻" },
+  //   { id: 5, name: "Destops", price: 1.5, image: "🖥️" },
+  //   { id: 6, name: "Consoles", price: 1.25, image: "🎮" },
+  //   { id: 7, name: "TVs", price: 4.5, image: "📺" },
+  //   { id: 8, name: "Bags", price: 3.25, image: "🎒" },
+  //   { id: 9, name: "Watches", price: 2.5, image: "⌚" },
+  //   { id: 10, name: "Headphones", price: 2.0, image: "🎧" },
+  // ];
+
+  const currencyFormatter = new Intl.NumberFormat("en-ZM", {
+    style: "currency",
+    currency: "ZMW",
+  });
+
   const frequentlyBought = [
-    { id: 1, name: "Coffee", price: 3.5, image: "☕" },
-    { id: 2, name: "Sandwich", price: 8.99, image: "🥪" },
-    { id: 3, name: "Water Bottle", price: 1.99, image: "💧" },
-    { id: 4, name: "Energy Drink", price: 2.75, image: "⚡" },
-    { id: 5, name: "Chips", price: 1.5, image: "🍟" },
-    { id: 6, name: "Candy Bar", price: 1.25, image: "🍫" },
-    { id: 7, name: "Muffin", price: 4.5, image: "🧁" },
-    { id: 8, name: "Juice", price: 3.25, image: "🧃" },
+    {
+      id: 1,
+      name: "Dell XPS 13 | Core i5 10th Gen | 16GB RAM | 512GB SSD | Windows 11",
+      price: 1299.99,
+      image: "💻",
+    },
+    {
+      id: 2,
+      name: "MacBook Pro 14-inch | M2 Pro Chip | 32GB RAM | 1TB SSD",
+      price: 2499.99,
+      image: "💻",
+    },
+    {
+      id: 3,
+      name: "Samsung Galaxy S24 Ultra | 256GB | 5G | Titanium Gray",
+      price: 1199.99,
+      image: "📱",
+    },
+    {
+      id: 4,
+      name: "Sony WH-1000XM5 Wireless Noise Canceling Headphones",
+      price: 399.99,
+      image: "🎧",
+    },
+    {
+      id: 5,
+      name: "iPad Pro 12.9-inch | M2 Chip | 128GB | Wi-Fi + Cellular",
+      price: 1099.99,
+      image: "📱",
+    },
+    {
+      id: 6,
+      name: "Gaming PC | RTX 4080 | Intel i7-13700K | 32GB DDR5 | 1TB NVMe SSD",
+      price: 2899.99,
+      image: "🖥️",
+    },
   ];
 
   const allProducts = [
@@ -79,6 +127,10 @@ const POSInterface = () => {
     setSearchTerm("");
   };
 
+  const handleNavigation = () => {
+    navigator("http://localhost:3000/pos");
+  };
+
   const handleOpenDrawer = () => {
     alert("Cash drawer opened!");
   };
@@ -91,8 +143,13 @@ const POSInterface = () => {
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
-    alert(`Sale completed! Total: $${getCartTotal().toFixed(2)}`);
-    handleNewSale();
+    // Pass cart and total to Payment page
+    navigate("/payment", {
+      state: {
+        cart,
+        total: getCartTotal(),
+      },
+    });
   };
 
   const filteredProducts = allProducts.filter((product) =>
@@ -157,7 +214,7 @@ const POSInterface = () => {
                       </button>
                     </div>
                     <span className="font-bold text-green-600">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {currencyFormatter.format(item.price * item.quantity)}
                     </span>
                   </div>
                 </div>
@@ -171,7 +228,7 @@ const POSInterface = () => {
           <div className="flex justify-between items-center mb-3">
             <span className="text-lg font-semibold">Total:</span>
             <span className="text-2xl font-bold text-green-600">
-              ${getCartTotal().toFixed(2)}
+              {currencyFormatter.format(getCartTotal())}
             </span>
           </div>
           <button
@@ -179,7 +236,6 @@ const POSInterface = () => {
             disabled={cart.length === 0}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-4 px-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 transition-colors"
           >
-            <DollarSign size={24} />
             Complete Sale
           </button>
         </div>
@@ -266,11 +322,9 @@ const POSInterface = () => {
                 </div>
                 <button
                   onClick={() => {
-                    handleNewSale();
-                    setDrawerOpen(false);
+                    window.location.href = "http://localhost:3000/pos";
                   }}
-                  button
-                  className="fixed bottom-4 flex left-1/2 -translate-x-1/2 bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl shadow-lg"
+                  className="fixed bottom-4 flex left-1/2 -translate-x-1/2 bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-xl shadow-lg items-center justify-center w-64"
                 >
                   <LogOut size={20} className="mr-2" />
                   Back Office
@@ -295,21 +349,39 @@ const POSInterface = () => {
             <button
               key={product.id}
               onClick={() => addToCart(product)}
-              className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 border border-gray-200 group"
+              title={product.name} // Tooltip for full name
+              className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 border border-gray-200 group flex flex-col h-full"
             >
-              <div className="text-center">
-                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
+              {/* Image/Icon Section */}
+              <div className="flex-shrink-0 text-center mb-3">
+                <div className="text-3xl group-hover:scale-110 transition-transform">
                   {product.image}
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm">
+              </div>
+
+              {/* Product Name - Flexible Height */}
+              <div className="flex-1 flex items-start justify-center mb-3 min-h-[3rem]">
+                <h3 className="font-medium text-gray-800 text-xs leading-relaxed text-center line-clamp-4 px-1">
                   {product.name}
                 </h3>
-                <div className="bg-green-100 text-green-800 py-2 px-3 rounded-lg font-bold">
-                  ${product.price.toFixed(2)}
+              </div>
+
+              {/* Price Section - Always at Bottom */}
+              <div className="flex-shrink-0">
+                <div className="bg-green-100 text-green-800 py-2 px-3 rounded-lg font-bold text-sm text-center">
+                  {currencyFormatter.format(product.price)}
                 </div>
               </div>
             </button>
           ))}
+          <style jsx>{`
+            .line-clamp-4 {
+              display: -webkit-box;
+              -webkit-line-clamp: 4;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+            }
+          `}</style>
         </div>
 
         {searchTerm && filteredProducts.length === 0 && (
